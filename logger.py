@@ -1,4 +1,10 @@
 # _*_coding:utf-8_*_
+"""
+@Author:  Javen Yan
+@File: logger.py
+@Software: PyCharm
+@Time :    2020/4/18 下午3:07
+"""
 import inspect
 import os
 import logging
@@ -8,6 +14,7 @@ from logging.handlers import RotatingFileHandler
 loggerList = dict()
 logLevelHandlers = dict()
 Level = logging.DEBUG
+color = False
 
 for level in [logging.DEBUG, logging.INFO, logging.WARNING, logging.FATAL, logging.ERROR]:
     logger = logging.getLogger(str(level))
@@ -92,10 +99,20 @@ def onTime():
 
 
 def getLogger(lv, message):
-    frame, filename, lineNo, functionName, code, unknownField = inspect.stack()[
-        2]
+    frame, filename, lineNo, functionName, code, unknownField = inspect.stack()[2]
     pyName = filename.split("/")[-1]
-    return "[%s] %s [%s] %s %s:%s" % (lv, onTime(), functionName, message, pyName, lineNo)
+    msg = "[%s] %s [%s] %s %s:%s" % (lv, onTime(), functionName, message, pyName, lineNo)
+    if color:
+        colorDict = {
+            "INFO": "\033[32m%s\033[0m",
+            "DEBUG": "\033[37m%s\033[0m",
+            "ERROR": "\033[31m%s\033[0m",
+            "FATAL": "\033[36m%s\033[0m",
+            "WARN": "\033[33m%s\033[0m",
+        }
+        return colorDict[lv] % msg
+    else:
+        return msg
 
 
 def info(msg, *args, **kwargs):
