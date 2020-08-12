@@ -31,14 +31,17 @@ def remove_handler():
         log.removeHandler(v)
 
 
-def InitLogConfig(loglevel: int = logging.DEBUG, dev: bool = True):
-    return InitLogConfigWithPrefix(loglevel, "", dev)
+def InitLogConfig(loglevel: int = logging.DEBUG, dev: bool = True, c: bool = False):
+    global color
+    color = c
+    return InitLogConfigWithPrefix(loglevel, "", dev, c)
 
 
-def InitLogConfigWithPrefix(loglevel: int = logging.DEBUG, filePrefix: str = "", dev: bool = True):
-    global loggerList, logLevelHandlers, Level
+def InitLogConfigWithPrefix(loglevel: int = logging.DEBUG, filePrefix: str = "", dev: bool = True, c: bool = False):
+    global loggerList, logLevelHandlers, Level, color
     isDebug = dev
     Level = loglevel
+    color = c
     if not isDebug:
         if filePrefix:
             logFilePrefix = os.getcwd() + "/logfile/" + filePrefix + "_"
@@ -99,9 +102,11 @@ def onTime():
 
 
 def getLogger(lv, message):
-    frame, filename, lineNo, functionName, code, unknownField = inspect.stack()[2]
+    frame, filename, lineNo, functionName, code, unknownField = inspect.stack()[
+        2]
     pyName = filename.split("/")[-1]
-    msg = "[%s] %s [%s] %s %s:%s" % (lv, onTime(), functionName, message, pyName, lineNo)
+    msg = "[%s] %s [%s] %s %s:%s" % (
+        lv, onTime(), functionName, message, pyName, lineNo)
     if color:
         colorDict = {
             "INFO": "\033[32m%s\033[0m",
